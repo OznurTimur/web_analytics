@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Investments Line Chart</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    .legend {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .legend rect {
+      width: 18px;
+      height: 18px;
+      margin-right: 5px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <label for="locationSelect">Select Location:</label>
+    <select id="locationSelect" onchange="filterByLocation()">
+      <option value="All">All Locations</option>
+      <option value="United States">United States</option>
+      <option value="Switzerland">Switzerland</option>
+      <option value="Canada">France</option>
+      <option value="Singapore">Singapore</option>
+      <option value="United Kingdom">United Kingdom</option>
+      <option value="Sweden">India</option>
+      <option value="Indonesia">Japan</option>
+    </select>
+  </div>
+  <div id="chart-container"></div>
+  <script>
+
+var data = [
+{
+    organizationName: "Molten Ventures",
+    location: "London, England, United Kingdom    ",
+    num_of_investments:208
+  },
+  {
+    organizationName: "ABB",
+    location: "Zürich, Zurich, Switzerland    ",
+    num_of_investments:12
+  },
+  {
+    organizationName: "General Motors",
+    location: "Detroit, Michigan, United States    ",
+    num_of_investments:32
+  },
+  {
+    organizationName: "HP",
+    location: "Palo Alto, California, United States    ",
+    num_of_investments:30
+  },
+  {
+    organizationName: "Ericsson",
+    location: "Kista, Stockholms Lan, Sweden    ",
+    num_of_investments:21
+  },
+  {
+    organizationName: "Gallagher",
+    location: "Rolling Meadows, Illinois, United States    ",
+    num_of_investments:4
+  },
+  {
+    organizationName: "Ares Management",
+    location: "Chicago, Illinois, United States    ",
+    num_of_investments:78
+  },
+  {
+    organizationName: "CIBC",
+    location: "Toronto, Ontario, Canada    ",
+    num_of_investments:57
+  },
+  {
+    organizationName: "StartEngine",
+    location: "Los Angeles, California, United States    ",
+    num_of_investments:214
+  },
+  {
+    organizationName: "Lockheed Martin",
+    location: "Bethesda, Maryland, United States    ",
+    num_of_investments:19
+  },
+  {
+    organizationName: "Rover",
+    location: "Seattle, Washington, United States    ",
+    num_of_investments:1
+  },
+  {
+    organizationName: "Silver Lake",
+    location: "Menlo Park, California, United States    ",
+    num_of_investments:130
+  },
+  {
+    organizationName: "KLOOK",
+    location: "Singapore, Central Region, Singapore    ",
+    num_of_investments:2
+  },
+  {
+    organizationName: "Antler",
+    location: "Singapore, Central Region, Singapore    ",
+    num_of_investments:119
+  },
+  {
+    organizationName: "Capital One",
+    location: "Mclean, Virginia, United States    ",
+    num_of_investments:20
+  },
+  {
+    organizationName: "Novartis",
+    location: "Basel, Basel-Stadt, Switzerland    ",
+    num_of_investments:73
+  },
+  {
+    organizationName: "DraftKings",
+    location: "Boston, Massachusetts, United States    ",
+    num_of_investments:5
+  },
+  {
+    organizationName: "Tokopedia",
+    location: "Jakarta, Jakarta Raya, Indonesia    ",
+    num_of_investments:2
+  },
+  {
+    organizationName: "Humana",
+    location: "Louisville, Kentucky, United States    ",
+    num_of_investments:29
+  },
+  {
+    organizationName: "Elemental Excelerator",
+    location: "Honolulu, Hawaii, United States    ",
+    num_of_investments:192
+  },
+  
+  
+]
+
+function drawChart(dataArray) {
+    var margin = { top: 20, right: 30, bottom: 100, left: 60 };
+    var width = 600 - margin.left - margin.right;
+    var height = 400 - margin.top - margin.bottom;
+
+    var svg = d3.select("#chart-container")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleBand()
+      .domain(dataArray.map(d => d.organizationName))
+      .range([0, width])
+      .padding(0.1);
+
+    var y = d3.scaleLinear()
+      .domain([0, d3.max(dataArray, d => d.num_of_investments)])
+      .nice()
+      .range([height, 0]);
+
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end");
+
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    // X-axis label
+    svg.append("text")
+      .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 70) + ")")
+      .style("text-anchor", "middle")
+      .text("Company Names");
+
+    // Y-axis label
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Number of Investments");
+
+    svg.selectAll(".bar")
+      .data(dataArray)
+      .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", d => x(d.organizationName))
+      .attr("width", x.bandwidth())
+      .attr("y", d => y(d.num_of_investments))
+      .attr("height", d => height - y(d.num_of_investments))
+      .attr("fill", "steelblue");
+  }
+
+  function filterByLocation() {
+    var selectedLocation = document.getElementById("locationSelect").value;
+    var filteredData;
+
+    if (selectedLocation === "All") {
+      filteredData = data;
+    } else {
+      filteredData = data.filter(d => d.location.includes(selectedLocation));
+    }
+
+    var aggregatedData = d3.rollup(filteredData, v => d3.sum(v, d => d.num_of_investments), d => d.organizationName);
+    var dataArray = Array.from(aggregatedData, ([organizationName, num_of_investments]) => ({ organizationName, num_of_investments }));
+
+    d3.select("svg").remove(); // Remove existing chart
+    drawChart(dataArray);
+  }
+
+  // Initial chart
+  drawChart(data);
+</script>
+</body>
+</html>

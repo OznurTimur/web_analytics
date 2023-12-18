@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.8/d3.min.js" type="text/javascript"></script>
+  <style>
+    .legend {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .legend rect {
+      width: 18px;
+      height: 18px;
+      margin-right: 5px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <label for="locationSelect">Select Location:</label>
+    <select id="locationSelect" onchange="filterByLocation()">
+      <option value="All">All Locations</option>
+      <option value="United States">United States</option>
+      <option value="Switzerland">Switzerland</option>
+      <option value="France">France</option>
+      <option value="Germany">Germany</option>
+      <option value="Singapore">Singapore</option>
+      <option value="United Kingdom">United Kingdom</option>
+      <option value="India">India</option>
+      <option value="Japan">Japan</option>
+      
+    </select>
+  </div>
+  <div id="viz">
+    <svg style="width:550px;height:550px;"></svg>
+  </div>
+  <div id="legend" class="legend"></div>
+  <script>
+
+var data = [
+{
+      organizationName: "Citi",
+      last_funding_amount_eur: 13500000,
+      last_funding_amount_usd: 1200000000,
+      total_funding_amount_usd:870000000,
+      location: "New York, New York, United States",
+      num_of_founders:1,
+      num_of_articles:12073
+    },
+    {
+      organizationName: "UBS",
+      last_funding_amount_eur: 24800000,
+      last_funding_amount_usd: 3500000000,
+      total_funding_amount_usd: 4750000000,
+      location: "Zürich, Zurich, Switzerland",
+      num_of_founders:1,
+      num_of_articles:7881
+
+    },
+    {
+      organizationName: "Mistral AI",
+      last_funding_amount_eur: 12000000,
+      last_funding_amount_usd: 130000000,
+      total_funding_amount_usd: 657753252,
+      location: "Paris, Ile-de-France, France",
+      num_of_founders:4,
+      num_of_articles:33
+    },
+    {
+      organizationName: "Verizon",
+      last_funding_amount_eur: 11900000,
+      last_funding_amount_usd: 11500000,
+      total_funding_amount_usd: 30103192466,
+      location: "New York, New York, United States",
+      num_of_founders:1,
+      num_of_articles:11447
+    },
+    {
+      organizationName: "Siemens",
+      last_funding_amount_eur: 48900000,
+      last_funding_amount_usd: 5169148062 ,
+      total_funding_amount_usd: 5178048063,
+      location: "Munich, Bayern, Germany",
+      num_of_founders:2,
+      num_of_articles:665
+    },
+    {
+      organizationName: "Anthropic",
+      last_funding_amount_eur: 39000000,
+      last_funding_amount_usd: 500000000,
+      total_funding_amount_usd:3304000000 ,
+      location: "San Francisco, California, United States",
+      num_of_founders:6,
+      num_of_articles:231
+    },
+    {
+      organizationName: "Shein",
+      last_funding_amount_eur: 187000000,
+      last_funding_amount_usd: 2000000000,
+      total_funding_amount_usd: 4053426604,
+      location: "Singapore, Central Region, Singapore",
+      num_of_founders:1,
+      num_of_articles:366
+    },
+    {
+      organizationName: "Exact Sciences",
+      last_funding_amount_eur: 87500000,
+      last_funding_amount_usd: 500000000,
+      total_funding_amount_usd: 2132200000,
+      location: "Madison, Wisconsin, United States",
+      num_of_founders:4,
+      num_of_articles:334
+    },
+    {
+      organizationName: "AstraZeneca",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 3750000000,
+      location: "Cambridge, Cambridgeshire, United Kingdom",
+      num_of_founders:1,
+      num_of_articles:6702
+    },
+    {
+      organizationName: "NVIDIA",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 4095000000,
+      location: "Santa Clara, California, United States",
+      num_of_founders:1,
+      num_of_articles:19342
+    },
+    {
+      organizationName: "Mamaearth",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd:139146287,
+      location: "Gurgaon, Haryana, India",
+      num_of_founders:1,
+      num_of_articles:157
+    },
+    {
+      organizationName: "SoftBank",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 1865943315,
+      location: "Minato, Chiba, Japan",
+      num_of_founders:1,
+      num_of_articles:9552
+    },
+    {
+      organizationName: "Blockchain.com",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 600000000,
+      location: "London, England, United Kingdom",
+      num_of_founders:1,
+      num_of_articles:7026
+    },
+    {
+      organizationName: "Humane",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 230000000,
+      location: "San Francisco, California, United States",
+      num_of_founders:1,
+      num_of_articles:80
+    },
+    {
+      organizationName: "Goldman Sachs",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 3750000000,
+      location: "New York, New York, United States",
+      num_of_founders:1,
+      num_of_articles:20232
+    },
+    {
+      organizationName: "Societe Generale",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 10000000,
+      location: "Paris, Ile-de-France, France",
+      num_of_founders:1,
+      num_of_articles:2084
+    },
+    {
+      organizationName: "Amazon",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 8108000000,
+      location: "Seattle, Washington, United States",
+      num_of_founders:1,
+      num_of_articles:57493
+    },
+    {
+      organizationName: "SAP",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 1301371240,
+      location: "Walldorf, Baden-Wurttemberg, Germany",
+      num_of_founders:1,
+      num_of_articles:10476
+    },
+    {
+      organizationName: "Google",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 26100000,
+      location: "Mountain View, California, United States",
+      num_of_founders:1,
+      num_of_articles:65936
+    },
+    {
+      organizationName: "OpenAI",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 11300120000      ,
+      total_funding_amount_usd: 11300120000      ,
+      location: "San Francisco, California, United States",
+      num_of_founders:6,
+      num_of_articles:3056
+    },
+]
+
+    var filteredData = data; // Initialize with full data
+
+    function createDoughnutChart(data) {
+    // Clear existing chart
+    d3.select("svg").selectAll("*").remove();
+
+    var width = 550;
+    var height = 550;
+    var radius = Math.min(width, height) / 2;
+
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    var svg = d3.select("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+    var arc = d3.arc()
+        .outerRadius(radius - 10)
+        .innerRadius(radius - 70);
+
+    var pie = d3.pie()
+        .sort(null)
+        .value(function(d) { return d.num_of_articles; });
+
+    var g = svg.selectAll(".arc")
+        .data(pie(data))
+        .enter().append("g")
+        .attr("class", "arc");
+
+    g.append("path")
+        .attr("d", arc)
+        .style("fill", function(d) { return color(d.data.organizationName); });
+
+    // Legend
+    var legend = d3.select("#legend")
+        .selectAll("div")
+        .data(data)
+        .enter()
+        .append("div")
+        .style("margin-bottom", "5px");
+
+    legend.append("span")
+        .attr("class", "legend")
+        .style("display", "inline-block")
+        .style("width", "18px")
+        .style("height", "18px")
+        .style("background-color", function(d) { return color(d.organizationName); });
+
+    legend.append("span")
+        .text(function(d) { return d.organizationName; });
+}
+
+
+    function updateChart() {
+      d3.select("svg").selectAll("*").remove(); // Clear existing chart
+      d3.select("#legend").selectAll("*").remove(); // Clear existing legend
+
+      createDoughnutChart(filteredData);
+    }
+
+    function filterByLocation() {
+      var location = document.getElementById('locationSelect').value;
+      filteredData = location === "All" ? data : data.filter(d => d.location.includes(location));
+      updateChart(); // Update chart with selected data
+    }
+
+    createDoughnutChart(data); // Initial chart creation
+  </script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.8/d3.min.js" type="text/javascript"></script>
+  <style>
+    .legend {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .legend rect {
+      width: 18px;
+      height: 18px;
+      margin-right: 5px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <label for="dataSelect">Select Data:</label>
+    <select id="dataSelect" onchange="updatePieChart()">
+      <option value="last_funding_amount_eur">Last Funding (EUR)</option>
+      <option value="last_funding_amount_usd">Last Funding (USD)</option>
+      <option value="total_funding_amount_usd">Total Funding (USD)</option>
+    </select>
+  </div>
+  <div>
+    <label for="locationSelect">Select Location:</label>
+    <select id="locationSelect" onchange="filterByLocation()">
+      <option value="All">All</option>
+      <option value="United States">United States</option>
+      <option value="Switzerland">Switzerland</option>
+      <option value="France">France</option>
+      <option value="Germany">Germany</option>
+      <option value="Singapore">Singapore</option>
+      <option value="United Kingdom">United Kingdom</option>
+      <option value="Spain">Spain</option>
+    </select>
+  </div>
+  <div id="viz">
+    <svg style="width:550px;height:550px;"></svg>
+  </div>
+  <div id="legend" class="legend"></div>
+  <script>
+
+var data = 
+    [
+    {
+      organizationName: "Citi",
+      last_funding_amount_eur: 13500000,
+      last_funding_amount_usd: 1200000000,
+      total_funding_amount_usd:870000000,
+      location: "New York, New York, United States"
+    },
+    {
+      organizationName: "UBS",
+      last_funding_amount_eur: 24800000,
+      last_funding_amount_usd: 3500000000,
+      total_funding_amount_usd: 4750000000,
+      location: "Zürich, Zurich, Switzerland"
+    },
+    {
+      organizationName: "Mistral AI",
+      last_funding_amount_eur: 12000000,
+      last_funding_amount_usd: 130000000,
+      total_funding_amount_usd: 657753252,
+      location: "Paris, Ile-de-France, France"
+    },
+    {
+      organizationName: "Verizon",
+      last_funding_amount_eur: 11900000,
+      last_funding_amount_usd: 11500000,
+      total_funding_amount_usd: 30103192466,
+      location: "New York, New York, United States"
+    },
+    {
+      organizationName: "Siemens",
+      last_funding_amount_eur: 48900000,
+      last_funding_amount_usd: 5169148062 ,
+      total_funding_amount_usd: 5178048063,
+      location: "Munich, Bayern, Germany"
+    },
+    {
+      organizationName: "Anthropic",
+      last_funding_amount_eur: 39000000,
+      last_funding_amount_usd: 500000000,
+      total_funding_amount_usd:3304000000 ,
+      location: "San Francisco, California, United States"
+    },
+    {
+      organizationName: "Shein",
+      last_funding_amount_eur: 187000000,
+      last_funding_amount_usd: 2000000000,
+      total_funding_amount_usd: 4053426604,
+      location: "Singapore, Central Region, Singapore"
+    },
+    {
+      organizationName: "Exact Sciences",
+      last_funding_amount_eur: 87500000,
+      last_funding_amount_usd: 500000000,
+      total_funding_amount_usd: 2132200000,
+      location: "Madison, Wisconsin, United States"
+    },
+    {
+      organizationName: "AstraZeneca",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 3750000000,
+      location: "Cambridge, Cambridgeshire, United Kingdom"
+    },
+    
+    {
+      organizationName: "Flanks",
+      organizationNameURL: "https://www.crunchbase.com/organization/flanks",
+      last_funding_amount_eur: 7400000,
+      last_funding_amount_usd: 7827324,
+      total_funding_amount_usd: 99000000,
+      location: "Barcelona, Catalonia, Spain"
+    },
+    {
+      organizationName: "Payflow",
+      organizationNameURL: "https://www.crunchbase.com/organization/payflow",
+      last_funding_amount_eur: 20000000,
+      last_funding_amount_usd: 21362933,
+      total_funding_amount_usd: 358826270,
+      location: "Barcelona, Catalonia, Spain"
+    },
+    {
+      organizationName: "Banco Bilbao Vizcaya Argentaria",
+      organizationNameURL: "https://www.crunchbase.com/organization/banco-bilbao-vizcaya-argentaria",
+      last_funding_amount_eur: 200000000,
+      last_funding_amount_usd: 200000000,
+      total_funding_amount_usd: 3696274190,
+      location: "Barcelona, Catalonia, Spain"
+    },
+    {
+    organizationName: "Cobee",
+    organizationNameURL: "https://www.crunchbase.com/organization/cobee",
+    last_funding_amount_eur: 40000000,
+    last_funding_amount_usd: 40986000,
+    total_funding_amount_usd: 564750000,
+    location: "Bilbao, Pais Vasco, Spain"
+  },
+  {
+    organizationName: "Atani",
+    organizationNameURL: "https://www.crunchbase.com/organization/atani",
+    last_funding_amount_eur: 6000000,
+    last_funding_amount_usd: 6000000,
+    total_funding_amount_usd: 129500000,
+    location: "Madrid, Madrid, Spain"
+  },
+  {
+    organizationName: "Verse",
+    organizationNameURL: "https://www.crunchbase.com/organization/verse-2",
+    last_funding_amount_eur: 5306804,
+    last_funding_amount_usd: 5306804,
+    total_funding_amount_usd: 376368040,
+    location: "Madrid, Madrid, Spain"
+  },
+  {
+    organizationName: "Fuel",
+    organizationNameURL: "https://www.crunchbase.com/organization/fuell-corporate-cards",
+    last_funding_amount_eur: 0,
+    last_funding_amount_usd: 0,
+    total_funding_amount_usd: 2500000,
+    location: "Barcelona, Catalonia, Spain"
+  },
+  {
+      organizationName: "Repsol Energy Ventures ",
+      organizationNameURL: "https://www.crunchbase.com/organization/repsol-energy-ventures",
+      last_funding_amount_eur: 575000000,
+      last_funding_amount_usd: 635380178,
+      total_funding_amount_usd: 5750000000,
+      location: "Madrid, Madrid, Spain"
+    },{
+      organizationName: "Divilo",
+      organizationNameURL: "https://www.crunchbase.com/organization/divilo",
+      last_funding_amount_eur: 3000000,
+      last_funding_amount_usd: 3140851,
+      total_funding_amount_usd: 122750000,
+      location: "Madrid, Madrid, Spain"
+    },{
+      organizationName: "StudentFinance",
+      organizationNameURL: "https://www.crunchbase.com/organization/studentfinance",
+      last_funding_amount_eur: 39000000,
+      last_funding_amount_usd: 41248933,
+      total_funding_amount_usd: 446500000,
+      location: "Madrid, Madrid, Spain"
+    },
+  
+  ];
+    var filteredData = data; // Initialize with full data
+
+    function createPieChart(data, key) {
+        var fillScale = d3.scaleOrdinal()
+          .domain(data.map(d => d.organizationName))
+          .range(d3.schemeCategory10);
+
+        var pie = d3.pie()
+          .sort(null)
+          .value(d => d[key]);
+
+        var arc = d3.arc()
+          .innerRadius(0)
+          .outerRadius(200);
+
+        var pieData = pie(data);
+
+        var svg = d3.select("svg")
+          .append("g")
+          .attr("transform", "translate(300,300)");
+
+        var arcs = svg.selectAll("path")
+          .data(pieData)
+          .enter()
+          .append("g");
+
+        arcs.append("path")
+          .attr("d", arc)
+          .style("fill", d => fillScale(d.data.organizationName))
+          .style("stroke", "black")
+          .style("stroke-width", "2px");
+
+        // Legend
+        var legend = d3.select("#legend")
+          .selectAll("div")
+          .data(fillScale.domain())
+          .enter()
+          .append("div")
+          .style("margin-bottom", "5px");
+
+        legend.append("span")
+          .attr("class", "legend")
+          .style("display", "inline-block")
+          .style("width", "18px")
+          .style("height", "18px")
+          .style("background-color", fillScale);
+
+        legend.append("span")
+          .text(d => d);
+    }
+
+    function updatePieChart() {
+      var selectedValue = document.getElementById('dataSelect').value;
+      d3.select("svg").selectAll("*").remove(); // Clear existing chart
+      d3.select("#legend").selectAll("*").remove(); // Clear existing legend
+
+      createPieChart(filteredData, selectedValue);
+    }
+
+    function filterByLocation() {
+      var location = document.getElementById('locationSelect').value;
+      filteredData = location === "All" ? data : data.filter(d => d.location.includes(location));
+      updatePieChart(); // Update chart with selected data
+    }
+
+    createPieChart(data, 'last_funding_amount_eur'); // Initial data
+  </script>
+</body>
+</html>
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+  
+      

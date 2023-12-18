@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.0.0/d3.min.js"></script>
+</head>
+<body>
+  <div>
+    <label for="locationSelect">Select Location:</label>
+    <select id="locationSelect" onchange="filterByLocation(this.value)">
+      <option value="All">All Locations</option>
+      <option value="United States">United States</option>
+      <option value="Switzerland">Switzerland</option>
+      <option value="France">France</option>
+      <option value="Germany">Germany</option>
+      <option value="Singapore">Singapore</option>
+      <option value="United Kingdom">United Kingdom</option>
+      <option value="India">India</option>
+      <option value="Japan">Japan</option>
+    </select>
+  </div>
+  <div id="scatterPlot"></div>
+
+  <script>
+    var data = [
+{
+      organizationName: "Citi",
+      last_funding_amount_eur: 13500000,
+      last_funding_amount_usd: 1200000000,
+      total_funding_amount_usd:870000000,
+      location: "New York, New York, United States",
+      num_of_founders:1
+    },
+    {
+      organizationName: "UBS",
+      last_funding_amount_eur: 24800000,
+      last_funding_amount_usd: 3500000000,
+      total_funding_amount_usd: 4750000000,
+      location: "Zürich, Zurich, Switzerland",
+      num_of_founders:1
+
+    },
+    {
+      organizationName: "Mistral AI",
+      last_funding_amount_eur: 12000000,
+      last_funding_amount_usd: 130000000,
+      total_funding_amount_usd: 657753252,
+      location: "Paris, Ile-de-France, France",
+      num_of_founders:4
+    },
+    {
+      organizationName: "Verizon",
+      last_funding_amount_eur: 11900000,
+      last_funding_amount_usd: 11500000,
+      total_funding_amount_usd: 30103192466,
+      location: "New York, New York, United States",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Siemens",
+      last_funding_amount_eur: 48900000,
+      last_funding_amount_usd: 5169148062 ,
+      total_funding_amount_usd: 5178048063,
+      location: "Munich, Bayern, Germany",
+      num_of_founders:2
+    },
+    {
+      organizationName: "Anthropic",
+      last_funding_amount_eur: 39000000,
+      last_funding_amount_usd: 500000000,
+      total_funding_amount_usd:3304000000 ,
+      location: "San Francisco, California, United States",
+      num_of_founders:6
+    },
+    {
+      organizationName: "Shein",
+      last_funding_amount_eur: 187000000,
+      last_funding_amount_usd: 2000000000,
+      total_funding_amount_usd: 4053426604,
+      location: "Singapore, Central Region, Singapore",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Exact Sciences",
+      last_funding_amount_eur: 87500000,
+      last_funding_amount_usd: 500000000,
+      total_funding_amount_usd: 2132200000,
+      location: "Madison, Wisconsin, United States",
+      num_of_founders:4
+    },
+    {
+      organizationName: "AstraZeneca",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 3750000000,
+      location: "Cambridge, Cambridgeshire, United Kingdom",
+      num_of_founders:1
+    },
+    {
+      organizationName: "NVIDIA",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 4095000000,
+      location: "Santa Clara, California, United States",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Mamaearth",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd:139146287,
+      location: "Gurgaon, Haryana, India",
+      num_of_founders:1
+    },
+    {
+      organizationName: "SoftBank",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 1865943315,
+      location: "Minato, Chiba, Japan",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Blockchain.com",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 600000000,
+      location: "London, England, United Kingdom",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Humane",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 230000000,
+      location: "San Francisco, California, United States",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Goldman Sachs",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 3750000000,
+      location: "New York, New York, United States",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Societe Generale",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 10000000,
+      location: "Paris, Ile-de-France, France",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Amazon",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 8108000000,
+      location: "Seattle, Washington, United States",
+      num_of_founders:1
+    },
+    {
+      organizationName: "SAP",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 1301371240,
+      location: "Walldorf, Baden-Wurttemberg, Germany",
+      num_of_founders:1
+    },
+    {
+      organizationName: "Google",
+      last_funding_amount_eur: 98600000,
+      last_funding_amount_usd: 2250000000,
+      total_funding_amount_usd: 26100000,
+      location: "Mountain View, California, United States",
+      num_of_founders:1
+    },
+]
+
+
+    function filterByLocation(location) {
+      var filteredData = location === "All" ? data : data.filter(d => d.location.includes(location));
+      createScatterPlot(filteredData);
+    }
+
+    function createScatterPlot(data) {
+    var margin = { top: 20, right: 30, bottom: 80, left: 50 };
+    var width = 600 - margin.left - margin.right;
+    var height = 400 - margin.top - margin.bottom;
+
+    var svg = d3.select("#scatterPlot")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleBand().range([0, width]).padding(0.1);
+    var y = d3.scaleLinear().range([height, 0]);
+
+    x.domain(data.map(d => d.organizationName));
+    y.domain([0, d3.max(data, d => d.num_of_founders)]);
+
+    svg.selectAll("circle")
+      .data(data)
+      .enter().append("circle")
+      .attr("cx", d => x(d.organizationName) + x.bandwidth() / 2)
+      .attr("cy", d => y(d.num_of_founders))
+      .attr("r", 5)
+      .attr("fill", "steelblue")
+      .style("opacity", 0.6);
+
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("transform", "rotate(-45)");
+
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Number of Founders");
+
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," +
+                           (height + margin.top + 50) + ")")
+      .style("text-anchor", "middle")
+      .text("Company Names");
+  }
+
+  createScatterPlot(data);
+</script>
+</body>
+</html>

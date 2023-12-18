@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Investors Line Plot</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+
+<label for="locationSelect">Select Location:</label>
+<select id="locationSelect" onchange="filterByLocation()">
+  <option value="All">All Locations</option>
+  <option value="United States">United States</option>
+  <option value="United Kingdom">United Kingdom</option>
+  <option value="France">France</option>
+  <option value="China">China</option>
+  <option value="Germany">Germany</option>
+  <option value="India">India</option>
+  <option value="Canada">Canada</option>
+  <option value="Ireland">Ireland</option>
+</select>
+
+<div id="chart-container"></div>
+
+<script>
+var data = [
+
+    {
+        organizationName: "BAE Systems",
+        location: "Farnborough, United Kingdom    ",
+        num_of_investors:4
+      },
+      {
+        organizationName: "Farfetch",
+        location: "London, England, United Kingdom    ",
+        num_of_investors:28
+      },
+      {
+        organizationName: "Docker",
+        location: "Palo Alto, California, United States        ",
+        num_of_investors:40
+      },
+      {
+        organizationName: "Cowbell Cyber",
+        location: "Pleasanton, California, United States        ",
+        num_of_investors:15
+      },
+      {
+        organizationName: "Sanofi",
+        location: "Paris, Ile-de-France, France        ",
+        num_of_investors:2
+      },
+      {
+        organizationName: "Gecko Robotics",
+        location: "Pittsburgh, Pennsylvania, United States        ",
+        num_of_investors:23
+      },
+      {
+        organizationName: "Alibaba Group",
+        location: "Hangzhou, Zhejiang, China        ",
+        num_of_investors:33
+      },
+      {
+        organizationName: "Worldcoin",
+        location: "Berlin, Berlin, Germany        ",
+        num_of_investors:20
+      },
+      {
+        organizationName: "Bitcoin",
+        location: "San Francisco, California, United States        ",
+        num_of_investors:4
+      },
+      {
+        organizationName: "Snap",
+        location: "Venice, California, United States        ",
+        num_of_investors:39
+      },
+      {
+        organizationName: "GE Healthcare",
+        location: "Chicago, Illinois, United States        ",
+        num_of_investors:1
+      },
+      {
+        organizationName: "RepeatMD",
+        location: "Houston, Texas, United States        ",
+        num_of_investors:5
+      },
+      {
+        organizationName: "Climate Transition Corporation",
+        location: "Santa Monica, California, United States        ",
+        num_of_investors:2
+      },
+      {
+        organizationName: "HDFC Bank",
+        location: "Mumbai, Maharashtra, India        ",
+        num_of_investors:3
+      },
+      {
+        organizationName: "SoundHound",
+        location: "Santa Clara, California, United States        ",
+        num_of_investors:35
+      },
+      {
+        organizationName: "Blackberry",
+        location: "Waterloo, Ontario, Canada        ",
+        num_of_investors:1
+      },
+      {
+        organizationName: "GitLab",
+        location: "San Francisco, California, United States        ",
+        num_of_investors:20
+      },
+      {
+        organizationName: "SentinelOne",
+        location: "Mountain View, California, United States        ",
+        num_of_investors:19
+      },
+      {
+        organizationName: "Accenture",
+        location: "Dublin, Dublin, Ireland        ",
+        num_of_investors:1
+      },
+      {
+        organizationName: "Intuit",
+        location: "Mountain View, California, United States        ",
+        num_of_investors:3
+      },
+]
+
+function drawLinePlot(dataArray) {
+    var margin = { top: 20, right: 30, bottom: 150, left: 60 };
+    var width = 600 - margin.left - margin.right;
+    var height = 400 - margin.top - margin.bottom;
+
+    var svg = d3.select("#chart-container")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var x = d3.scaleBand()
+      .domain(dataArray.map(d => d.organizationName))
+      .range([0, width])
+      .padding(0.1);
+
+    var y = d3.scaleLinear()
+      .domain([0, d3.max(dataArray, d => d.num_of_investors)])
+      .nice()
+      .range([height, 0]);
+
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "rotate(-45)")
+      .style("text-anchor", "end");
+
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+        // X-axis label
+    svg.append("text")
+      .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 120) + ")")
+      .style("text-anchor", "middle")
+      .text("Company Names");
+
+    // Y-axis label
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Number of Investors");
+
+    // Draw line plot
+    var line = d3.line()
+      .x(d => x(d.organizationName) + x.bandwidth() / 2)
+      .y(d => y(d.num_of_investors));
+
+    svg.append("path")
+      .datum(dataArray)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2)
+      .attr("d", line);
+  }
+
+  function filterByLocation() {
+    var selectedLocation = document.getElementById("locationSelect").value;
+    var filteredData;
+
+    if (selectedLocation === "All") {
+      filteredData = data;
+    } else {
+      filteredData = data.filter(d => d.location.includes(selectedLocation));
+    }
+
+    var dataArray = filteredData.map(d => ({ organizationName: d.organizationName, num_of_investors: d.num_of_investors }));
+
+    d3.select("svg").remove(); // Remove existing chart
+    drawLinePlot(dataArray);
+  }
+
+  // Initial line plot
+  drawLinePlot(data);
+</script>
+</body>
+</html>

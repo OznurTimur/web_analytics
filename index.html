@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+ 
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <script src="scripts.js"></script>
+
+</head>
+<body>
+  
+  <div class="tabs">
+    <button onclick="openTab('founders')">Number of Founders</button>
+    <button onclick="openTab('funding')">Funding Amounts</button>
+    <button onclick="openTab('articles')">Number of Articles</button>
+    <button onclick="openTab('investments')">Number of Investments</button>
+    <button onclick="openTab('investors')">Number of Investors</button>
+    
+   
+  </div>
+  <div id="founders" class="tabcontent">
+    <iframe src="founders.html" width="100%" height="600"></iframe>
+  </div>
+  <div id="funding" class="tabcontent">
+    <iframe src="funding.html" width="100%" height="600"></iframe>
+  </div>
+  <div id="articles" class="tabcontent">
+    <iframe src="articles.html" width="100%" height="600"></iframe>
+  </div>
+  <div id="investments" class="tabcontent">
+    <iframe src="investments.html" width="100%" height="600"></iframe>
+  </div>
+  <div id="investors" class="tabcontent">
+    <iframe src="investors.html" width="100%" height="600"></iframe>
+  </div>
+  
+  <script src="scripts.js"></script>
+</body>
+</html>

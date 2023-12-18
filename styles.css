@@ -1,0 +1,24 @@
+/* Basic styling for tabs */
+.tabs {
+    overflow: hidden;
+  }
+  
+  .tabs button {
+    background-color: #f2f2f2;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .tabs button:hover {
+    background-color: #ddd;
+  }
+  
+  .tabcontent {
+    display: none;
+    padding: 20px;
+  }
+  
